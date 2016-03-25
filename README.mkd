@@ -1,0 +1,38 @@
+# iOS App Version Script
+
+Copy `version.py` to the root of your project. Set the `SETTINGS_PLIST` variable to point to the `Root.plist` file in the app's `Settings.bundle` directory, if one exists. This shows the version number under the app's settings in the system Settings app. Otherwise, leave it as `None`.
+
+In Xcode, change the Versioning System option (under Target > Your App > Versioning) to "Apple Generic". Set the Current Project Version option (under Target > Your App > Versioning) to "1" as a placeholder for now.
+
+You can verify that this is set up correctly by running:
+
+    /usr/bin/agvtool what-version
+
+and checking that no error is raised.
+
+Set the marketing version to `1.0`:
+
+    ./version.py set-marketing-version 1.0
+
+Set the build number to `0`:
+
+    ./version.py set-build-number 0
+
+Get the full version number:
+
+    ./version.py get-full-version
+    1.0_0
+
+Set the initial tag:
+
+    git tag releases/v1.0_0
+
+Create the `ReleaseNotes` directory;
+
+    mkdir ReleaseNotes
+
+Make a build. This includes incrementing (bumping) the build number, generate release notes using the Git log from the previous tag (defaulting to `releases/v{marketing_version}_{build_number - 1}`, but configurable via the `--prev-tag` option), committing the release notes (in `ReleaseNotes/v{marketing_version}_{build_number}.mkd`), and tagging the current version (as `releases/v{marketing_version}_{build_number]`):
+
+    ./version.py make-build
+
+Note that the source tree must have no uncommitted or unstaged changes before running (since it makes a tag).
